@@ -52,12 +52,20 @@ public class HomebankingApplication {
 					"Deposito por venta",LocalDateTime.now());
 			Transaction transaction2 = new Transaction(-10000, DEBIT,
 					"Por pago de cuenta de luz",LocalDateTime.now());
+			Transaction transaction3 = new Transaction(13000, CREDIT,
+					"Depósito en efectivo",LocalDateTime.now());
+			Transaction transaction4 = new Transaction(-1000, DEBIT,
+					"Por carga de tarjeta sube",LocalDateTime.now());
 
 			account1.addTransaction(transaction1);
 			account1.addTransaction(transaction2);
+			account3.addTransaction(transaction3);
+			account3.addTransaction(transaction4);
 
 			transactionRepository.save(transaction1);
 			transactionRepository.save(transaction2);
+			transactionRepository.save(transaction3);
+			transactionRepository.save(transaction4);
 
 		};
 	}
