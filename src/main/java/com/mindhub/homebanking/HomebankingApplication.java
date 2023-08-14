@@ -1,13 +1,7 @@
 package com.mindhub.homebanking;
 
-import com.mindhub.homebanking.models.Account;
-import com.mindhub.homebanking.models.Client;
-import com.mindhub.homebanking.models.Loan;
-import com.mindhub.homebanking.models.Transaction;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.LoanRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.models.*;
+import com.mindhub.homebanking.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,7 +22,8 @@ public class HomebankingApplication {
 
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository,
-									  TransactionRepository transactionRepository, LoanRepository loanRepository){
+									  TransactionRepository transactionRepository, LoanRepository loanRepository,
+									  ClientLoanRepository clientLoanRepository){
 		return (args) -> {
 			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com");
 			Client client2 = new Client("Diego", "Aravena", "daravena@mindhub.com");
@@ -77,6 +72,28 @@ public class HomebankingApplication {
 			loanRepository.save(prestamo1);
 			loanRepository.save(prestamo2);
 			loanRepository.save(prestamo3);
+
+			ClientLoan hipotecario1 = new ClientLoan(400000, 60, client1, prestamo1);
+			ClientLoan personal1 = new ClientLoan(50000, 12, client1, prestamo2);
+
+			ClientLoan personal2 = new ClientLoan(100000, 24, client3, prestamo2);
+			ClientLoan automotriz1 = new ClientLoan(200000, 36, client3, prestamo3);
+
+			client1.addLoan(hipotecario1);
+			client1.addLoan(personal1);
+
+			client3.addLoan(personal2);
+			client3.addLoan(automotriz1);
+
+			prestamo1.addLoan(hipotecario1);
+			prestamo2.addLoan(personal1);
+			prestamo2.addLoan(personal2);
+			prestamo3.addLoan(automotriz1);
+
+			clientLoanRepository.save(hipotecario1);
+			clientLoanRepository.save(personal1);
+			clientLoanRepository.save(personal2);
+			clientLoanRepository.save(automotriz1);
 
 
 		};
