@@ -11,7 +11,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.mindhub.homebanking.models.TransactionType.*;
+
+import static com.mindhub.homebanking.models.CardType.CREDIT;
+import static com.mindhub.homebanking.models.CardType.DEBIT;
+import static com.mindhub.homebanking.models.CardColor.*;
 
 @SpringBootApplication
 public class HomebankingApplication {
@@ -23,7 +26,7 @@ public class HomebankingApplication {
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository,
 									  TransactionRepository transactionRepository, LoanRepository loanRepository,
-									  ClientLoanRepository clientLoanRepository){
+									  ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return (args) -> {
 			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com");
 			Client client2 = new Client("Diego", "Aravena", "daravena@mindhub.com");
@@ -46,13 +49,13 @@ public class HomebankingApplication {
 			accountRepository.save(account2);
 			accountRepository.save(account3);
 
-			Transaction transaction1 = new Transaction(20000.50, CREDIT,
+			Transaction transaction1 = new Transaction(20000.50, TransactionType.CREDIT,
 					"Deposito por venta",LocalDateTime.now());
-			Transaction transaction2 = new Transaction(-10000, DEBIT,
+			Transaction transaction2 = new Transaction(-10000, TransactionType.DEBIT,
 					"Por pago de cuenta de luz",LocalDateTime.now());
-			Transaction transaction3 = new Transaction(13000, CREDIT,
+			Transaction transaction3 = new Transaction(13000, TransactionType.CREDIT,
 					"Depósito en efectivo",LocalDateTime.now());
-			Transaction transaction4 = new Transaction(-1000, DEBIT,
+			Transaction transaction4 = new Transaction(-1000, TransactionType.DEBIT,
 					"Por carga de tarjeta sube",LocalDateTime.now());
 
 			account1.addTransaction(transaction1);
@@ -73,11 +76,11 @@ public class HomebankingApplication {
 			loanRepository.save(prestamo2);
 			loanRepository.save(prestamo3);
 
-			ClientLoan hipotecario1 = new ClientLoan(400000, 60, client1, prestamo1);
-			ClientLoan personal1 = new ClientLoan(50000, 12, client1, prestamo2);
+			ClientLoan hipotecario1 = new ClientLoan(400000, 60);
+			ClientLoan personal1 = new ClientLoan(50000, 12);
 
-			ClientLoan personal2 = new ClientLoan(100000, 24, client3, prestamo2);
-			ClientLoan automotriz1 = new ClientLoan(200000, 36, client3, prestamo3);
+			ClientLoan personal2 = new ClientLoan(100000, 24);
+			ClientLoan automotriz1 = new ClientLoan(200000, 36);
 
 			client1.addLoan(hipotecario1);
 			client1.addLoan(personal1);
@@ -94,6 +97,23 @@ public class HomebankingApplication {
 			clientLoanRepository.save(personal1);
 			clientLoanRepository.save(personal2);
 			clientLoanRepository.save(automotriz1);
+
+			Card gold1 = new Card(DEBIT, GOLD, "2222-5555-3333-9999", 255,
+					LocalDate.now(), LocalDate.now().plusYears(5));
+			Card titanium1 = new Card(CREDIT, TITANIUM, "2255-5522-4488-9966", 555,
+					LocalDate.now(), LocalDate.now().plusYears(5));
+
+			Card silver1 = new Card(CREDIT, SILVER, "4567-8866-4741-2123", 207,
+					LocalDate.now(), LocalDate.now().plusYears(5));
+
+			client1.addCard(gold1);
+			client1.addCard(titanium1);
+			client2.addCard(silver1);
+
+			cardRepository.save(gold1);
+			cardRepository.save(titanium1);
+			cardRepository.save(silver1);
+
 
 
 		};
