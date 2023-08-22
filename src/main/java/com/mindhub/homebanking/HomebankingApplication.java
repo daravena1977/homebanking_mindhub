@@ -32,7 +32,7 @@ public class HomebankingApplication {
 									  TransactionRepository transactionRepository, LoanRepository loanRepository,
 									  ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return (args) -> {
-			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("melb"));
+			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("melba123"));
 			Client client2 = new Client("Diego", "Aravena", "daravena@mindhub.com", passwordEncoder.encode("diego123"));
 			Client client3 = new Client("Enzo", "Aravena", "earavena@mindhub.com", passwordEncoder.encode("enzo123") );
 			Client client4 = new Client("Sandra", "Lazaro", "sandra.lazaro@mindhub.com", passwordEncoder.encode("sandra123"));

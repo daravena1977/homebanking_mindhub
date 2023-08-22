@@ -16,11 +16,14 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     @Autowired
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
     @RequestMapping("/accounts")
     public List<AccountDTO> getAccounts(){
-        return accountRepository.findAll().stream().map(account -> new AccountDTO(account)).collect(Collectors.toList());
+        return accountRepository.findAll()
+                .stream()
+                .map(account -> new AccountDTO(account))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping("/accounts/{id}")

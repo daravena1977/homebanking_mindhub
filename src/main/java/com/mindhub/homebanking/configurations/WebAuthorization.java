@@ -21,9 +21,13 @@ public class WebAuthorization {
     public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/web/index.html").permitAll()
-                .antMatchers(HttpMethod.POST, "/clients").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
                 .antMatchers("/rest/**", "/h2-console/**").hasAuthority("ADMIN")
-                .antMatchers(HttpMethod.GET, "/clients").hasAuthority("CLIENT");
+                .antMatchers(HttpMethod.GET, "/api/clients").hasAuthority("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/clients/current").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/clients/**").hasAuthority("ADMIN");
+
+
 
         http.formLogin()
                 .usernameParameter("email")
@@ -63,8 +67,4 @@ public class WebAuthorization {
             session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
         }
     }
-
-
-
-
 }
