@@ -55,12 +55,12 @@ public class CardController {
 
         String cardNumber = newCard.generateCardNumber();
 
-        if (cards.stream().anyMatch(card -> card.getNumber().equals(cardNumber))){
-            return new ResponseEntity<>("This cvv number already exist", HttpStatus.FORBIDDEN);
+        if (cardRepository.findByNumber(cardNumber) != null){
+            return new ResponseEntity<>("This card number already exist", HttpStatus.FORBIDDEN);
         }
 
         newCard.setCardHolder(client.getFullName());
-        newCard.setNumber(newCard.generateCardNumber());
+        newCard.setNumber(cardNumber);
         newCard.setCvv(newCard.generateCvvNumber());
 
         client.addCard(newCard);
