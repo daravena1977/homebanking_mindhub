@@ -43,10 +43,10 @@ public class HomebankingApplication {
 			clientRepository.save(client4);
 			clientRepository.save(client5);
 
-			Account account1 = new Account("VIN001", LocalDate.now(), 5000 );
-			Account account2 = new Account("VIN002", LocalDate.now().plusDays(1), 7000 );
-			Account account3 = new Account("VIN003", LocalDate.now().plusDays(5), 10000 );
-			Account account4 = new Account("VIN004", LocalDate.now().plusDays(7), 15000 );
+			Account account1 = new Account("VIN-001", LocalDate.now(), 5000d );
+			Account account2 = new Account("VIN-002", LocalDate.now().plusDays(1), 7000d );
+			Account account3 = new Account("VIN-003", LocalDate.now().plusDays(5), 10000d );
+			Account account4 = new Account("VIN-004", LocalDate.now().plusDays(7), 15000d );
 
 			client1.addAccount(account1);
 			client1.addAccount(account2);
@@ -130,9 +130,16 @@ public class HomebankingApplication {
 					LocalDate.now(), LocalDate.now().plusYears(5));
 
 			client1.addCard(gold1);
+			gold1.setCardHolder(client1.getFullName());
+
 			client1.addCard(titanium1);
+			titanium1.setCardHolder(client1.getFullName());
+
 			client2.addCard(silver1);
+			silver1.setCardHolder(client2.getFullName());
+
 			client4.addCard(titanium2);
+			titanium2.setCardHolder(client4.getFullName());
 
 			cardRepository.save(gold1);
 			cardRepository.save(titanium1);

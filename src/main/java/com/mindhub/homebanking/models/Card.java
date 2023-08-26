@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.Random;
 
 @Entity
 public class Card {
@@ -24,6 +25,13 @@ public class Card {
     private Client client;
 
     public Card() {
+    }
+
+    public Card(CardType type, CardColor color, LocalDate fromDate, LocalDate thruDate) {
+        this.type = type;
+        this.color = color;
+        this.fromDate = fromDate;
+        this.thruDate = thruDate;
     }
 
     public Card(CardType type, CardColor color, String number, int cvv, LocalDate fromDate, LocalDate thruDate) {
@@ -101,5 +109,24 @@ public class Card {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public String generateCardNumber(){
+        Random random = new Random();
+        StringBuilder cardNumber = new StringBuilder();
+
+        for (int i = 0; i < 3; i++ ){
+            int randomInt = 1000 + random.nextInt(10000 - 1000);
+            cardNumber.append(String.valueOf(randomInt).concat("-"));
+        }
+        int randomInt = 1000 + random.nextInt(10000 - 1000);
+        cardNumber.append(String.valueOf(randomInt));
+
+        return cardNumber.toString();
+    }
+
+    public int generateCvvNumber(){
+        Random random = new Random();
+        return 100 + random.nextInt(1000 - 100);
     }
 }

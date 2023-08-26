@@ -10,7 +10,7 @@ public class AccountDTO {
     private Long id;
     private String number;
     private LocalDate creationDate;
-    private double balance;
+    private Double balance;
 
     private Set<TransactionDTO> transactions;
 
@@ -38,7 +38,7 @@ public class AccountDTO {
         return creationDate;
     }
 
-    public double getBalance() {
+    public Double getBalance() {
         return balance;
     }
 

@@ -1,7 +1,9 @@
 package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.ClientDTO;
+import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
+import com.mindhub.homebanking.repositories.AccountRepository;
 import com.mindhub.homebanking.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +22,9 @@ public class ClientController {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -52,7 +58,19 @@ public class ClientController {
                     HttpStatus.FORBIDDEN);
         }
 
-        clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
+        Client client = clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
+
+        Account account = new Account();
+
+        account.setNumber(account.generateRandomAccountNumber());
+        account.setCreationDate(LocalDate.now());
+        account.setBalance(0d);
+
+        client.addAccount(account);
+
+        accountRepository.save(account);
+
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -60,4 +78,5 @@ public class ClientController {
     public ClientDTO getClient(Authentication authentication){
         return new ClientDTO(clientRepository.findByEmail(authentication.getName()));
     }
+
 }
