@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import static com.mindhub.homebanking.models.Role.*;
+
 @Configuration
 public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
 
@@ -23,14 +25,14 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
     public void init(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(inputName -> {
             Client client = clientRepository.findByEmail(inputName);
-            if (client != null && client.getFirstName() != "admin") {
+            if (client != null && client.getRole().equals(CLIENT)) {
                 return new User(client.getEmail(), client.getPassword(),
                         AuthorityUtils.createAuthorityList("CLIENT"));
-            } else if (client != null && client.getFirstName() == "admin") {
+            } else if (client != null && client.getRole().equals(ADMIN)) {
                 return new User(client.getEmail(), client.getPassword(),
                         AuthorityUtils.createAuthorityList("ADMIN"));
             } else {
-                throw new UsernameNotFoundException("Unknow user: " + inputName);
+                throw new UsernameNotFoundException("Unknown user: " + inputName);
             }
 
         } );

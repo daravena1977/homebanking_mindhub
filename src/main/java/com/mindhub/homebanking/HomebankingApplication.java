@@ -17,6 +17,7 @@ import java.util.List;
 import static com.mindhub.homebanking.models.CardType.CREDIT;
 import static com.mindhub.homebanking.models.CardType.DEBIT;
 import static com.mindhub.homebanking.models.CardColor.*;
+import static com.mindhub.homebanking.models.Role.*;
 
 @SpringBootApplication
 public class HomebankingApplication {
@@ -32,11 +33,11 @@ public class HomebankingApplication {
 									  TransactionRepository transactionRepository, LoanRepository loanRepository,
 									  ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return (args) -> {
-			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("melba123"));
-			Client client2 = new Client("Diego", "Aravena", "daravena@mindhub.com", passwordEncoder.encode("diego123"));
-			Client client3 = new Client("Enzo", "Aravena", "earavena@mindhub.com", passwordEncoder.encode("enzo123") );
-			Client client4 = new Client("Sandra", "Lazaro", "sandra.lazaro@mindhub.com", passwordEncoder.encode("sandra123"));
-			Client client5 = new Client("admin", "admin", "admin@mindhub.com", passwordEncoder.encode("admin123"));
+			Client client1 = new Client("Melba", "Morel", "melba@mindhub.com", passwordEncoder.encode("melba123"), CLIENT);
+			Client client2 = new Client("Diego", "Aravena", "daravena@mindhub.com", passwordEncoder.encode("diego123"), CLIENT);
+			Client client3 = new Client("Enzo", "Aravena", "earavena@mindhub.com", passwordEncoder.encode("enzo123"), CLIENT );
+			Client client4 = new Client("Sandra", "Lazaro", "sandra.lazaro@mindhub.com", passwordEncoder.encode("sandra123"), CLIENT);
+			Client client5 = new Client("Juan", "Perez", "juan.perez.admin@mindhub.com", passwordEncoder.encode("admin123"), ADMIN);
 			clientRepository.save(client1);
 			clientRepository.save(client2);
 			clientRepository.save(client3);

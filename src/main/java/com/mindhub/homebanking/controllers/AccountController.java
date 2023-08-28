@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,9 +51,13 @@ public class AccountController {
 
         Account account = new Account();
 
-        String accountNumber = account.generateRandomAccountNumber();
+        String accountNumber = account.generateAccountNumber();
 
-        account.setNumber(account.generateRandomAccountNumber());
+        if (accountRepository.findByNumber(accountNumber) != null){
+            return new ResponseEntity<>("Account number already exist", HttpStatus.FORBIDDEN);
+        }
+
+        account.setNumber(account.generateAccountNumber());
         account.setCreationDate(LocalDate.now());
         account.setBalance(0d);
 
@@ -62,6 +66,16 @@ public class AccountController {
         accountRepository.save(account);
 
         return new ResponseEntity<>("Account create successfully",HttpStatus.CREATED);
+    }
+
+    @RequestMapping("/clients/current/accounts")
+    public Set<AccountDTO> getAccounts(Authentication authentication){
+        Client client = clientRepository.findByEmail(authentication.getName());
+        return client.getAccounts()
+                .stream()
+                .map(account -> new AccountDTO(account))
+                .collect(Collectors.toSet());
+
     }
 
 }

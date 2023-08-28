@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.mindhub.homebanking.models.Role.*;
+
 @RestController
 @RequestMapping("/api")
 public class ClientController {
@@ -58,11 +60,11 @@ public class ClientController {
                     HttpStatus.FORBIDDEN);
         }
 
-        Client client = clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
+        Client client = clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password), CLIENT));
 
         Account account = new Account();
 
-        account.setNumber(account.generateRandomAccountNumber());
+        account.setNumber(account.generateAccountNumber());
         account.setCreationDate(LocalDate.now());
         account.setBalance(0d);
 

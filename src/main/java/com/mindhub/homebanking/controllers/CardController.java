@@ -1,5 +1,6 @@
 package com.mindhub.homebanking.controllers;
 
+import com.mindhub.homebanking.dtos.CardDTO;
 import com.mindhub.homebanking.models.Card;
 import com.mindhub.homebanking.models.CardColor;
 import com.mindhub.homebanking.models.CardType;
@@ -35,7 +36,8 @@ public class CardController {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
 
-        Client client = clientRepository.findByEmail(authentication.getName());
+        Client client = new Client();
+        client = clientRepository.findByEmail(authentication.getName());
 
         Set<Card> cards = new HashSet<>();
                cards = client.getCards()
@@ -68,6 +70,16 @@ public class CardController {
         cardRepository.save(newCard);
 
         return new ResponseEntity<>("New Card created", HttpStatus.CREATED);
+
+    }
+
+    @RequestMapping("/clients/current/cards")
+    public Set<CardDTO> getCards(Authentication authentication){
+        Client client = clientRepository.findByEmail(authentication.getName());
+        return client.getCards()
+                .stream()
+                .map(card -> new CardDTO(card))
+                .collect(Collectors.toSet());
 
     }
 

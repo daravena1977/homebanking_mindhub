@@ -80,7 +80,7 @@ public class Account {
         transactions.add(transaction);
     }
 
-    public String generateRandomAccountNumber(){
+    public String generateAccountNumber(){
         Random random = new Random();
         int randomInt = random.nextInt(100000000);
         return "VIN-".concat(String.valueOf(randomInt));
