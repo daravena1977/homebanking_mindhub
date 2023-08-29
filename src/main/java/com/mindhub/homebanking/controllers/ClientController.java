@@ -45,12 +45,10 @@ public class ClientController {
     }
 
     @RequestMapping(path = "/clients", method = RequestMethod.POST)
-    public ResponseEntity<Object> register(@RequestParam String firstName,
-                                           @RequestParam String lastName,
-                                           @RequestParam String email,
-                                           @RequestParam String password){
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()
-            || password.isEmpty()){
+    public ResponseEntity<Object> register(@RequestParam String firstName, @RequestParam String lastName,
+                                           @RequestParam String email, @RequestParam String password){
+        if (firstName.isBlank() || lastName.isBlank() || email.isBlank()
+            || password.isBlank()){
             return new ResponseEntity<>("Missing data",
                     HttpStatus.FORBIDDEN);
         }
@@ -60,7 +58,8 @@ public class ClientController {
                     HttpStatus.FORBIDDEN);
         }
 
-        Client client = clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password), CLIENT));
+        Client client = clientRepository.save(new Client(firstName, lastName, email,
+                passwordEncoder.encode(password), CLIENT));
 
         Account account = new Account();
 
@@ -71,7 +70,6 @@ public class ClientController {
         client.addAccount(account);
 
         accountRepository.save(account);
-
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
