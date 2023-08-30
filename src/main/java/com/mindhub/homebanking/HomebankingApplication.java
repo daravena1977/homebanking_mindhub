@@ -61,13 +61,13 @@ public class HomebankingApplication {
 
 			Transaction transaction1 = new Transaction(20000.50, TransactionType.CREDIT,
 					"Deposito por venta",LocalDateTime.now());
-			Transaction transaction2 = new Transaction(-10000, TransactionType.DEBIT,
+			Transaction transaction2 = new Transaction(-10000.00, TransactionType.DEBIT,
 					"Por pago de cuenta de luz",LocalDateTime.now());
-			Transaction transaction3 = new Transaction(13000, TransactionType.CREDIT,
+			Transaction transaction3 = new Transaction(13000d, TransactionType.CREDIT,
 					"Depósito en efectivo",LocalDateTime.now());
-			Transaction transaction4 = new Transaction(-1000, TransactionType.DEBIT,
+			Transaction transaction4 = new Transaction(-1000d, TransactionType.DEBIT,
 					"Por carga de tarjeta sube",LocalDateTime.now());
-			Transaction transaction5 = new Transaction(55000, TransactionType.CREDIT,
+			Transaction transaction5 = new Transaction(55000d, TransactionType.CREDIT,
 					"Cobro de honorarios", LocalDateTime.now());
 
 			account1.addTransaction(transaction1);
