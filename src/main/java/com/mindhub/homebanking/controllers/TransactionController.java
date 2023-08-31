@@ -1,11 +1,12 @@
 package com.mindhub.homebanking.controllers;
 
+import com.mindhub.homebanking.models.Account;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.models.Transaction;
 import com.mindhub.homebanking.models.TransactionType;
-import com.mindhub.homebanking.repositories.AccountRepository;
-import com.mindhub.homebanking.repositories.ClientRepository;
-import com.mindhub.homebanking.repositories.TransactionRepository;
+import com.mindhub.homebanking.services.AccountService;
+import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ import java.time.LocalDateTime;
 public class TransactionController {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private TransactionService transactionService;
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private AccountService accountService;
 
     @Transactional
     @RequestMapping(path = "/transactions", method = RequestMethod.POST)
@@ -39,50 +40,67 @@ public class TransactionController {
                                                     @RequestParam String description
                                                     ){
 
-        Client client = clientRepository.findByEmail(authentication.getName());
+        if (!authentication.isAuthenticated()){
+            return new ResponseEntity<>("This user in not authenticated", HttpStatus.UNAUTHORIZED);
+        }
 
-        if (amount.isNaN() || description.isBlank() || fromAccountNumber.isBlank()
-                || toAccountNumber.isBlank()){
-            return new ResponseEntity<>("Missing Data", HttpStatus.FORBIDDEN);
+        Client client = clientService.findByEmail(authentication.getName());
+
+        if (amount.isNaN()){
+            return new ResponseEntity<>("This is not a number", HttpStatus.FORBIDDEN);
+        }
+
+        if (description.isBlank()){
+            return new ResponseEntity<>("The transaction's description is missing", HttpStatus.FORBIDDEN);
+        }
+
+        if (fromAccountNumber.isBlank()){
+            return new ResponseEntity<>("The from account number is missing", HttpStatus.FORBIDDEN);
+        }
+
+        if (toAccountNumber.isBlank()){
+            return new ResponseEntity<>("The account number object is missing", HttpStatus.FORBIDDEN);
         }
 
         if (fromAccountNumber.equals(toAccountNumber)){
             return new ResponseEntity<>("Accounts are the same", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsByNumber(fromAccountNumber)){
+        if (!accountService.existsByNumber(fromAccountNumber)){
             return new ResponseEntity<>("this account number don't exists", HttpStatus.FORBIDDEN);
         }
 
-        if (accountRepository.findByNumberAndClient(fromAccountNumber, client)== null){
+        if (client.getAccounts().stream().noneMatch(account -> account.getNumber().equals(fromAccountNumber))){
             return new ResponseEntity<>("This account don't belongs to client", HttpStatus.FORBIDDEN);
         }
 
-        if (!accountRepository.existsByNumber(toAccountNumber)){
+        if (!accountService.existsByNumber(toAccountNumber)){
             return new ResponseEntity<>("this account number don't exists", HttpStatus.FORBIDDEN);
         }
 
-        if (accountRepository.findByNumber(fromAccountNumber).getBalance() < amount){
+        Account fromAccount = accountService.findByNumber(fromAccountNumber);
+        Account toAccount = accountService.findByNumber(toAccountNumber);
+
+        if (fromAccount.getBalance() < amount){
             return new ResponseEntity<>("This account don't have this amount available", HttpStatus.FORBIDDEN);
         }
 
-        Transaction transactionDebit = new Transaction(-amount, TransactionType.DEBIT, description, LocalDateTime.now());
-        Transaction transactionCredit = new Transaction(amount,TransactionType.CREDIT, description, LocalDateTime.now());
+        Transaction transactionDebit = new Transaction(-amount, TransactionType.DEBIT,
+                description.concat(" to ").concat(toAccountNumber), LocalDateTime.now());
+        Transaction transactionCredit = new Transaction(amount,TransactionType.CREDIT,
+                description.concat(" from ").concat(fromAccountNumber), LocalDateTime.now());
 
-        accountRepository.findByNumber(fromAccountNumber).addTransaction(transactionDebit);
-        accountRepository.findByNumber(toAccountNumber).addTransaction(transactionCredit);
+        fromAccount.addTransaction(transactionDebit);
+        toAccount.addTransaction(transactionCredit);
 
-        transactionRepository.save(transactionDebit);
-        transactionRepository.save(transactionCredit);
+        transactionService.saveTransaction(transactionDebit);
+        transactionService.saveTransaction(transactionCredit);
 
-        Double actualBalanceOriginAccount = accountRepository.findByNumber(fromAccountNumber).getBalance();
-        accountRepository.findByNumber(fromAccountNumber).setBalance(actualBalanceOriginAccount-amount);
+        fromAccount.setBalance(fromAccount.getBalance()-amount);
+        toAccount.setBalance(toAccount.getBalance()+amount);
 
-        Double actualBalanceObjectAccount = accountRepository.findByNumber(toAccountNumber).getBalance();
-        accountRepository.findByNumber(toAccountNumber).setBalance(actualBalanceObjectAccount+amount);
-
-        accountRepository.save(accountRepository.findByNumber(fromAccountNumber));
-        accountRepository.save(accountRepository.findByNumber(toAccountNumber));
+        accountService.saveAccount(fromAccount);
+        accountService.saveAccount(toAccount);
 
         return new ResponseEntity<>("Transaction has been successful", HttpStatus.CREATED);
     }
