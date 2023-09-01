@@ -25,15 +25,21 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
     public void init(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(inputName -> {
             Client client = clientRepository.findByEmail(inputName);
-            if (client != null && client.getRole().equals(CLIENT)) {
-                return new User(client.getEmail(), client.getPassword(),
-                        AuthorityUtils.createAuthorityList("CLIENT"));
-            } else if (client != null && client.getRole().equals(ADMIN)) {
-                return new User(client.getEmail(), client.getPassword(),
-                        AuthorityUtils.createAuthorityList("ADMIN"));
+
+            if (client != null){
+                if (client.getRole().equals(CLIENT)){
+                    return new User(client.getEmail(), client.getPassword(),
+                            AuthorityUtils.createAuthorityList("CLIENT"));
+                }
+                if (client.getRole().equals(ADMIN)){
+                    return new User(client.getEmail(), client.getPassword(),
+                            AuthorityUtils.createAuthorityList("ADMIN"));
+                }
             } else {
                 throw new UsernameNotFoundException("Unknown user: " + inputName);
             }
+
+            throw new UsernameNotFoundException("Unknown user: " + inputName);
 
         } );
     }
