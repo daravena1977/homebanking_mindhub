@@ -2,6 +2,7 @@ package com.mindhub.homebanking.services;
 
 import com.mindhub.homebanking.dtos.AccountDTO;
 import com.mindhub.homebanking.models.Account;
+import com.mindhub.homebanking.models.Client;
 
 
 import java.util.List;
@@ -29,4 +30,6 @@ public interface AccountService {
     boolean existsByNumber(String number);
 
     Account findByNumber(String number);
+
+    boolean existsByNumberAndClient(String number, Client client);
 }

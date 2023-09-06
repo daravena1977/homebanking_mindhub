@@ -22,7 +22,7 @@ public class WebAuthorization {
         http.authorizeRequests()
                 .antMatchers("/web/index.html", "/web/img/**", "/web/css/**", "/web/js/**").permitAll()
                 .antMatchers("/web/account.html","/web/accounts.html", "/web/cards.html",
-                        "/web/create-cards.html", "/web/transfers.html").authenticated()
+                        "/web/create-cards.html", "/web/transfers.html", "/web/loan-application.html").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/clients").permitAll()
                 .antMatchers("/rest/**", "/h2-console/**").hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/clients").hasAuthority("ADMIN")
@@ -33,6 +33,8 @@ public class WebAuthorization {
                 .antMatchers(HttpMethod.POST, "/api/transactions").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/clients/current/cards").hasAuthority("CLIENT")
                 .antMatchers(HttpMethod.GET, "/api/clients/current/cards").hasAuthority("CLIENT")
+                .antMatchers(HttpMethod.GET, "/api/loans").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/loans").authenticated()
                 .antMatchers(HttpMethod.GET, "/api/clients/**").hasAuthority("ADMIN")
                 .antMatchers(HttpMethod.GET, "/api/accounts/**").authenticated()
                 .anyRequest().denyAll();
