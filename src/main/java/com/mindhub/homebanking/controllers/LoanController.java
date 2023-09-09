@@ -96,6 +96,7 @@ public class LoanController {
                     HttpStatus.FORBIDDEN);
         }
 
+
         if (!accountService.existsByNumber(loanApplicationDTO.getToAccountNumber())){
             return new ResponseEntity<>("This account object don't exists", HttpStatus.FORBIDDEN);
         }
@@ -127,6 +128,5 @@ public class LoanController {
 
         return new ResponseEntity<>("This loan has been created successfully", HttpStatus.CREATED);
     }
-
 
 }
