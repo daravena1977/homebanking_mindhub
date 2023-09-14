@@ -16,20 +16,18 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping("/clients")
+    @GetMapping("/clients")
     public List<ClientDTO> getClients(){
         List<Client> clients = clientService.getClients();
         return clientService.getClientsDTO(clients);
     }
 
-    @RequestMapping("/clients/{id}")
+    @GetMapping("/clients/{id}")
     public ClientDTO getClient(@PathVariable Long id){
         return clientService.getClientDTO(id);
     }
 
-
-
-    @RequestMapping("/clients/current")
+    @GetMapping("/clients/current")
     public ClientDTO getClient(Authentication authentication){
         return clientService.getClientDTOAuthenticated(authentication);
     }

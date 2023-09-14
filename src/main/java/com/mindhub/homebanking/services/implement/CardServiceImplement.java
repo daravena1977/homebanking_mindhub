@@ -7,6 +7,7 @@ import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.repositories.CardRepository;
 import com.mindhub.homebanking.services.CardService;
+import com.mindhub.homebanking.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,12 +65,11 @@ public class CardServiceImplement implements CardService {
 
     @Override
     public String generateNewCardNumber() {
-        Card card = new Card();
 
         String newCardNumber;
 
         do{
-            newCardNumber = card.generateCardNumber();
+            newCardNumber = CardUtils.generateCardNumber();
         }while (cardRepository.findByNumber(newCardNumber)!=null);
 
         return newCardNumber;

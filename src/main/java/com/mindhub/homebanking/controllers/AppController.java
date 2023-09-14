@@ -7,10 +7,7 @@ import com.mindhub.homebanking.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -22,7 +19,7 @@ public class AppController {
     @Autowired
     private AccountService accountService;
 
-    @RequestMapping(path = "/clients", method = RequestMethod.POST)
+    @PostMapping("/clients")
     public ResponseEntity<Object> register(@RequestParam String firstName, @RequestParam String lastName,
                                            @RequestParam String email, @RequestParam String password){
         if (firstName.isBlank()){

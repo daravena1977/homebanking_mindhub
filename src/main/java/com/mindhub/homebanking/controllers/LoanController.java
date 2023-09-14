@@ -2,6 +2,7 @@ package com.mindhub.homebanking.controllers;
 
 import com.mindhub.homebanking.dtos.LoanApplicationDTO;
 import com.mindhub.homebanking.dtos.LoanDTO;
+import com.mindhub.homebanking.dtos.NewLoanDTO;
 import com.mindhub.homebanking.models.*;
 import com.mindhub.homebanking.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,14 +34,14 @@ public class LoanController {
     @Autowired
     private TransactionService transactionService;
 
-    @RequestMapping("/loans")
+    @GetMapping("/loans")
     public List<LoanDTO> getLoans(){
         List<Loan> loans = loanService.getLoans();
         return loanService.getLoansDTO(loans);
     }
 
     @Transactional
-    @RequestMapping(path = "/loans", method = RequestMethod.POST)
+    @PostMapping("/loans")
     public ResponseEntity<Object> createLoan(Authentication authentication,
                                          @RequestBody LoanApplicationDTO loanApplicationDTO){
         if (!authentication.isAuthenticated()){
@@ -56,7 +54,7 @@ public class LoanController {
             return new ResponseEntity<>("This user don't exists in the database", HttpStatus.FORBIDDEN);
         }
 
-        if (loanApplicationDTO.getLoanId().describeConstable().isEmpty()){
+        if (loanApplicationDTO.getLoanId() == null){
             return new ResponseEntity<>("The loan id is missing", HttpStatus.FORBIDDEN);
         }
 
@@ -64,7 +62,7 @@ public class LoanController {
             return new ResponseEntity<>("The amount loan data is missing", HttpStatus.FORBIDDEN);
         }
 
-        if (loanApplicationDTO.getPayments().describeConstable().isEmpty()){
+        if (loanApplicationDTO.getPayments() == null){
             return new ResponseEntity<>("The payments loan data is missing", HttpStatus.FORBIDDEN);
         }
 
@@ -127,6 +125,28 @@ public class LoanController {
         accountService.saveAccount(account);
 
         return new ResponseEntity<>("This loan has been created successfully", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/admin/loans")
+    public ResponseEntity<Object> createLoan(@RequestBody NewLoanDTO newLoanDTO){
+
+        if (newLoanDTO.getName().isBlank()){
+            return new ResponseEntity<>("This loan type must be hava a name", HttpStatus.FORBIDDEN);
+        }
+
+        if (newLoanDTO.getMaxAmount().isNaN()){
+            return new ResponseEntity<>("The max amount data missing", HttpStatus.FORBIDDEN);
+        }
+
+        if (newLoanDTO.getMaxAmount()<= 0){
+            return new ResponseEntity<>("The max amount data must be greater than 0", HttpStatus.FORBIDDEN);
+        }
+
+        Loan loan = new Loan(newLoanDTO.getName(), newLoanDTO.getMaxAmount(), newLoanDTO.getPayments());
+
+        loanService.saveLoan(loan);
+
+        return null;
     }
 
 }

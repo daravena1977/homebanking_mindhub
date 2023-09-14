@@ -7,6 +7,7 @@ import com.mindhub.homebanking.models.CardType;
 import com.mindhub.homebanking.models.Client;
 import com.mindhub.homebanking.services.CardService;
 import com.mindhub.homebanking.services.ClientService;
+import com.mindhub.homebanking.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class CardController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
+    @PostMapping("/clients/current/cards")
     public ResponseEntity<Object> addCard(Authentication authentication, @RequestParam CardType cardType,
                                           @RequestParam CardColor cardColor){
 
@@ -35,11 +36,11 @@ public class CardController {
             return new ResponseEntity<>("This user in not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
-        if (cardType.describeConstable().isEmpty()){
+        if (!cardType.equals(CardType.CREDIT) && !cardType.equals(CardType.DEBIT)){
             return new ResponseEntity<>("This card type is missing", HttpStatus.FORBIDDEN);
         }
 
-        if (cardColor.describeConstable().isEmpty()){
+        if (!cardColor.equals(CardColor.GOLD) && !cardColor.equals(CardColor.SILVER) && !cardColor.equals(CardColor.TITANIUM)) {
             return new ResponseEntity<>("This card color is missing", HttpStatus.FORBIDDEN);
         }
 
@@ -55,7 +56,7 @@ public class CardController {
 
         newCard.setCardHolder(client.getFullName());
         newCard.setNumber(cardNumber);
-        newCard.setCvv(newCard.generateCvvNumber());
+        newCard.setCvv(CardUtils.generateCvvNumber());
 
         client.addCard(newCard);
 
@@ -65,7 +66,7 @@ public class CardController {
 
     }
 
-    @RequestMapping("/clients/current/cards")
+    @GetMapping("/clients/current/cards")
     public Set<CardDTO> getCards(Authentication authentication){
         Client client = clientService.findByEmail(authentication.getName());
         return client.getCards()

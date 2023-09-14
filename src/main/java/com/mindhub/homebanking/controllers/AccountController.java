@@ -25,18 +25,18 @@ public class AccountController {
     @Autowired
     private ClientService clientService;
 
-    @RequestMapping("/accounts")
+    @GetMapping("/accounts")
     public List<AccountDTO> getAccounts(){
         List<Account> accounts = accountService.getAccounts();
         return accountService.getAccountsDTO(accounts);
     }
 
-    @RequestMapping("/accounts/{id}")
+    @GetMapping("/accounts/{id}")
     public AccountDTO getAccount(@PathVariable Long id){
         return accountService.getAccountDTO(id);
     }
 
-    @RequestMapping(path = "/clients/current/accounts", method = RequestMethod.POST)
+    @PostMapping("/clients/current/accounts")
     public ResponseEntity<Object> addAccount(Authentication authentication){
         if (!authentication.isAuthenticated()){
             return new ResponseEntity<>("This user in not authenticated", HttpStatus.UNAUTHORIZED);
@@ -58,7 +58,7 @@ public class AccountController {
         return new ResponseEntity<>("Account create successfully",HttpStatus.CREATED);
     }
 
-    @RequestMapping("/clients/current/accounts")
+    @GetMapping("/clients/current/accounts")
     public Set<AccountDTO> getAccounts(Authentication authentication){
         Client client = clientService.findByEmail(authentication.getName());
         return client.getAccounts()
